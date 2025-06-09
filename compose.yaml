@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:17.5-alpine3.22
+    init: true
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    env_file:
+      - compose.env
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
