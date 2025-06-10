@@ -3,7 +3,10 @@
         "accessibilities",
         "Dtos",
         "ipascalcase",
+        "mypassword",
         "Npgsql",
+        "orderdb",
+        "orderservice",
         "pascalcase",
         "tpascalcase"
     ]
