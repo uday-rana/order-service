@@ -45,4 +45,11 @@ public class OrdersController(IOrderService service) : ControllerBase
         OrderDto? updated = await _service.UpdateAsync(id, dto);
         return updated is null ? NotFound() : Ok(updated);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<bool>> Delete(int id)
+    {
+        bool deleted = await _service.DeleteAsync(id);
+        return deleted ? NoContent() : NotFound();
+    }
 }

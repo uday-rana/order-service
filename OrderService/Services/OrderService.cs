@@ -81,4 +81,15 @@ public class OrderService(OrderDbContext context) : IOrderService
         await _context.SaveChangesAsync();
         return order.ToDto();
     }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        Order? order = await _context.Orders.FindAsync(id);
+
+        if (order is null) { return false; }
+
+        _context.Orders.Remove(order);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }
