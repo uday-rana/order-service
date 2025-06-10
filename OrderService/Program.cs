@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
 using OrderService.Data;
+using OrderService.Dtos;
 using OrderService.Interfaces;
 using OrderService.Services;
 
@@ -32,11 +33,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapGet("/health", () => TypedResults.Ok(new
-{
-    status = "ok",
-    hostname = Environment.MachineName,
-    version = typeof(Program).Assembly.GetName().Version?.ToString() ?? "unknown"
-}));
+app.MapGet("/health", () => TypedResults.Ok(new HealthDto(
+    Status: "ok",
+    Hostname: Environment.MachineName,
+    Version: typeof(Program).Assembly.GetName().Version?.ToString() ?? "unknown")
+    )
+);
 
 app.Run();
