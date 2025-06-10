@@ -15,4 +15,7 @@ dotnet ef database update --project OrderService
 
 # Run the ASP.NET Core Web API
 dotnet run --project OrderService
+
+# Build the Docker image
+docker build -t orderservice -f OrderService/Dockerfile .
 ```
