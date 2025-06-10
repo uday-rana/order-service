@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 
 using OrderService.Data;
+using OrderService.Dtos;
+using OrderService.Extensions;
 using OrderService.Interfaces;
 using OrderService.Models;
-using OrderService.Models.Dtos;
 
 namespace OrderService.Services;
 
@@ -11,58 +12,52 @@ public class OrderService(OrderDbContext context) : IOrderService
 {
     private readonly OrderDbContext _context = context;
 
-    public async Task<List<OrderDto>> GetAllAsync()
-    {
-        return await _context.Orders
+    public async Task<List<OrderDto>> GetAllAsync() => await _context.Orders
             .Include(o => o.Customer)
             .Include(o => o.Items)
-            .Select(o => new OrderDto
-            {
-                Id = o.Id,
-                CreatedAt = o.CreatedAt,
-                FulfilledAt = o.FulfilledAt,
-                Status = o.Status.ToString(),
-                Customer = new CustomerDto
-                {
-                    Name = o.Customer.Name,
-                    Email = o.Customer.Email
-                },
-                Items = o.Items.Select(i => new OrderItemDto
-                {
-                    ProductName = i.ProductName,
-                    UnitPrice = i.UnitPrice,
-                    Quantity = i.Quantity
-                }).ToList()
-            })
+            .ThenInclude(i => i.Product)
+            .Select(o => o.ToDto())
             .ToListAsync();
-    }
 
     public async Task<OrderDto?> GetByIdAsync(int id)
     {
-        var order = await _context.Orders
+        Order? order = await _context.Orders
             .Include(o => o.Customer)
             .Include(o => o.Items)
+            .ThenInclude(i => i.Product)
             .FirstOrDefaultAsync(o => o.Id == id);
 
-        return order is null
-            ? null
-            : new OrderDto
-            {
-                Id = order.Id,
-                CreatedAt = order.CreatedAt,
-                FulfilledAt = order.FulfilledAt,
-                Status = order.Status.ToString(),
-                Customer = new CustomerDto
+        return order?.ToDto();
+    }
+
+    public async Task<OrderDto> CreateAsync(OrderCreateDto dto)
+    {
+        Customer customer = await _context.Customers.FindAsync(dto.CustomerId)
+            ?? throw new Exception("Customer not found");
+
+        // Get the list of product ids from the dto
+        IEnumerable<int> productIds = dto.Items
+            .Select(i => i.ProductId)
+            .Distinct();
+
+        // Get the product entities using the ids and store them in a dict with the ids as the keys
+        Dictionary<int, Product> products = await _context.Products
+            .Where(p => productIds.Contains(p.Id))
+            .ToDictionaryAsync(p => p.Id);
+
+        Order newOrder = new()
+        {
+            Customer = customer,
+            Items = [.. dto.Items.Select(i => new OrderItem
                 {
-                    Name = order.Customer.Name,
-                    Email = order.Customer.Email
-                },
-                Items = [.. order.Items.Select(i => new OrderItemDto
-                {
-                    ProductName = i.ProductName,
-                    UnitPrice = i.UnitPrice,
+                    Product = products[i.ProductId],
                     Quantity = i.Quantity
                 })]
-            };
+        };
+
+        _context.Orders.Add(newOrder);
+        await _context.SaveChangesAsync();
+
+        return newOrder.ToDto();
     }
 }
