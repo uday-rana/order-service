@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
+using OrderService.Dtos;
 using OrderService.Interfaces;
-using OrderService.Models.Dtos;
 
 namespace OrderService.Controllers;
 
@@ -14,14 +14,14 @@ public class OrdersController(IOrderService service) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<OrderDto>>> GetAll()
     {
-        var orders = await _service.GetAllAsync();
+        List<OrderDto> orders = await _service.GetAllAsync();
         return Ok(orders);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<OrderDto>> GetById(int id)
     {
-        var order = await _service.GetByIdAsync(id);
+        OrderDto? order = await _service.GetByIdAsync(id);
         return order is null ? NotFound() : Ok(order);
     }
 }

@@ -7,12 +7,12 @@ public static class DataSeeder
 {
     public static void SeedDevelopmentData(WebApplication app)
     {
-        using var scope = app.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+        using IServiceScope scope = app.Services.CreateScope();
+        OrderDbContext context = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
 
         if (!context.Customers.Any())
         {
-            var order = new Order
+            Order order = new()
             {
                 Customer = new Customer { Name = "Test User", Email = "test@example.com" },
                 CreatedAt = DateTime.UtcNow,

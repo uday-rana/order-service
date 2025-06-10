@@ -4,7 +4,7 @@ using OrderService.Data;
 using OrderService.Interfaces;
 using OrderService.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddDbContextPool<OrderDbContext>(options =>
@@ -17,7 +17,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IOrderService, OrderService.Services.OrderService>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
