@@ -17,4 +17,11 @@ public class OrdersController(IOrderService service) : ControllerBase
         var orders = await _service.GetAllAsync();
         return Ok(orders);
     }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<OrderDto>> GetById(int id)
+    {
+        var order = await _service.GetByIdAsync(id);
+        return order is null ? NotFound() : Ok(order);
+    }
 }
