@@ -8,9 +8,9 @@ public static class DataSeeder
     public static void SeedDevelopmentData(WebApplication app)
     {
         using var scope = app.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
 
-        if (!db.Customers.Any())
+        if (!context.Customers.Any())
         {
             var order = new Order
             {
@@ -23,9 +23,9 @@ public static class DataSeeder
                 ]
             };
 
-            db.Orders.Add(order);
-            Console.WriteLine(db.ChangeTracker.DebugView.ShortView);
-            db.SaveChanges();
+            context.Orders.Add(order);
+            Console.WriteLine(context.ChangeTracker.DebugView.ShortView);
+            context.SaveChanges();
             Console.WriteLine($"Customer ID: {order.Customer.Id}");
             Console.WriteLine($"Order ID: {order.Id}");
             Console.WriteLine($"First OrderItem ID: {order.Items.First().Id}");
