@@ -31,6 +31,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/health", () => TypedResults.Ok(new
+{
+    status = "ok",
+    hostname = Environment.MachineName,
+    version = typeof(Program).Assembly.GetName().Version?.ToString() ?? "unknown"
+}));
 
 app.Run();
