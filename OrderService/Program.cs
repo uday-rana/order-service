@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 using Microsoft.EntityFrameworkCore;
 
 using OrderService.Data;
@@ -7,7 +9,10 @@ using OrderService.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(opts =>
+    opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter())
+    );
+
 builder.Services.AddDbContextPool<OrderDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("OrderDb"))
     );

@@ -38,4 +38,11 @@ public class OrdersController(IOrderService service) : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<OrderDto>> Update(int id, OrderUpdateDto dto)
+    {
+        OrderDto? updated = await _service.UpdateAsync(id, dto);
+        return updated is null ? NotFound() : Ok(updated);
+    }
 }

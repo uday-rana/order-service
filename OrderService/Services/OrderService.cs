@@ -60,4 +60,25 @@ public class OrderService(OrderDbContext context) : IOrderService
 
         return newOrder.ToDto();
     }
+
+    public async Task<OrderDto?> UpdateAsync(int id, OrderUpdateDto dto)
+    {
+        Order? order = await _context.Orders
+            .Include(o => o.Customer)
+            .Include(o => o.Items)
+            .ThenInclude(i => i.Product)
+            .FirstOrDefaultAsync(o => o.Id == id);
+
+        if (order is null) { return null; }
+
+
+        order.Status = dto.Status;
+        if (order.Status == OrderStatus.Fulfilled)
+        {
+            order.FulfilledAt = DateTime.UtcNow;
+        }
+
+        await _context.SaveChangesAsync();
+        return order.ToDto();
+    }
 }

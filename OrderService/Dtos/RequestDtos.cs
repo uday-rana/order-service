@@ -1,3 +1,5 @@
+using OrderService.Models;
+
 namespace OrderService.Dtos;
 
 public record OrderCreateDto(
@@ -8,4 +10,8 @@ public record OrderCreateDto(
 public record OrderItemCreateDto(
     int ProductId,
     int Quantity
+);
+
+public record OrderUpdateDto(
+    OrderStatus Status
 );
