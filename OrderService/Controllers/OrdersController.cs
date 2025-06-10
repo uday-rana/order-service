@@ -39,7 +39,7 @@ public class OrdersController(IOrderService service) : ControllerBase
         }
     }
 
-    [HttpPut("{id}")]
+    [HttpPatch("{id}")]
     public async Task<ActionResult<OrderDto>> Update(int id, OrderUpdateDto dto)
     {
         OrderDto? updated = await _service.UpdateAsync(id, dto);
