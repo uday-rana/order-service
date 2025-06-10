@@ -19,7 +19,7 @@ public static class DataSeeder
                 Status = OrderStatus.Pending,
                 Items =
                 [
-                    new() { ProductName = "Test Order Item", UnitPrice = 9.99m, Quantity = 2 }
+                    new() { Product = new() { Name = "Test Order Item", Price = 9.99m, }, Quantity = 2 }
                 ]
             };
 

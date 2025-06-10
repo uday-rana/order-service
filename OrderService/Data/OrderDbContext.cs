@@ -9,4 +9,5 @@ public class OrderDbContext(DbContextOptions<OrderDbContext> options) : DbContex
     public DbSet<Customer> Customers { get; set; } = default!;
     public DbSet<Order> Orders { get; set; } = default!;
     public DbSet<OrderItem> OrderItems { get; set; } = default!;
+    public DbSet<Product> Products { get; set; } = default!;
 }
