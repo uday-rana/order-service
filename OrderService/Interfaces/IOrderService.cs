@@ -1,8 +1,8 @@
-using OrderService.Models.Responses;
+using OrderService.Models.Dtos;
 
 namespace OrderService.Interfaces;
 
 public interface IOrderService
 {
-    Task<List<OrderResponse>> GetAllAsync();
+    Task<List<OrderDto>> GetAllAsync();
 }

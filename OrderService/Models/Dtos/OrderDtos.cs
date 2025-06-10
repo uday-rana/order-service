@@ -1,24 +1,24 @@
-namespace OrderService.Models.Responses;
+namespace OrderService.Models.Dtos;
 
-public class OrderResponse
+public class OrderDto
 {
     public int Id { get; set; }
 
-    public CustomerResponse Customer { get; set; } = null!;
-    public List<ItemResponse> Items { get; set; } = [];
+    public CustomerDto Customer { get; set; } = null!;
+    public List<ItemDto> Items { get; set; } = [];
 
     public DateTime CreatedAt { get; set; }
     public DateTime? FulfilledAt { get; set; }
 
     public string Status { get; set; } = null!;
 
-    public class CustomerResponse
+    public class CustomerDto
     {
         public string Name { get; set; } = null!;
         public string? Email { get; set; }
     }
 
-    public class ItemResponse
+    public class ItemDto
     {
         public string ProductName { get; set; } = null!;
         public decimal UnitPrice { get; set; }

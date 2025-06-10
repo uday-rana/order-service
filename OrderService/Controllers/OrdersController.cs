@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using OrderService.Interfaces;
-using OrderService.Models.Responses;
+using OrderService.Models.Dtos;
 
 namespace OrderService.Controllers;
 
@@ -12,7 +12,7 @@ public class OrdersController(IOrderService service) : ControllerBase
     private readonly IOrderService _service = service;
 
     [HttpGet]
-    public async Task<ActionResult<List<OrderResponse>>> GetAll()
+    public async Task<ActionResult<List<OrderDto>>> GetAll()
     {
         var orders = await _service.GetAllAsync();
         return Ok(orders);
