@@ -26,7 +26,7 @@ public class OrdersController(IOrderService service) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<OrderDto>> Create([FromBody] OrderCreateDto dto)
+    public async Task<ActionResult<OrderDto>> Create(OrderCreateDto dto)
     {
         try
         {
