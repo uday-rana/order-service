@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 
 using OrderService.Data;
+using OrderService.Interfaces;
 using OrderService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddDbContextPool<OrderDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("OrderDb"))
@@ -15,9 +15,10 @@ builder.Services.AddDbContextPool<OrderDbContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IOrderService, OrderService.Services.OrderService>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
