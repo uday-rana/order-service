@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 
 using OrderService.Data;
@@ -16,6 +17,8 @@ builder.Services.AddControllers().AddJsonOptions(opts =>
 builder.Services.AddDbContextPool<OrderDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("OrderDb"))
     );
+
+builder.Services.AddHealthChecks();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -38,11 +41,20 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapGet("/health", () => TypedResults.Ok(new HealthDto(
-    Status: "ok",
-    Hostname: Environment.MachineName,
-    Version: typeof(Program).Assembly.GetName().Version?.ToString() ?? "unknown")
-    )
-);
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = async (context, healthReport) =>
+    {
+        context.Response.ContentType = "application/json; charset=utf-8";
+
+        HealthDto dto = new(
+            Status: healthReport.Status.ToString(),
+            Hostname: Environment.MachineName,
+            Version: typeof(Program).Assembly.GetName().Version?.ToString() ?? "unknown"
+        );
+
+        await context.Response.WriteAsJsonAsync(dto);
+    }
+});
 
 app.Run();
