@@ -44,13 +44,13 @@ You need to configure the database connection string and the JWT issuer domain a
 3. Apply EF Core migrations to create the schema
 
     ```sh
-    dotnet ef database update --project OrderService
+    dotnet ef database update
     ```
 
 4. Start the web API
 
     ```sh
-    dotnet run --project OrderService
+    dotnet run
     
     # Or, build and run the Docker image
     docker build -t orderservice -f OrderService/Dockerfile .
