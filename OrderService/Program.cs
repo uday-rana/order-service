@@ -21,6 +21,12 @@ builder.Services.AddDbContextPool<OrderDbContext>(options =>
 builder.Services.AddHealthChecks();
 builder.Services.AddHttpLogging(o => { });
 
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Logging.ClearProviders();
+    builder.Logging.AddJsonConsole();
+}
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
