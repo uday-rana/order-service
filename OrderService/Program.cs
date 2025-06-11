@@ -19,6 +19,7 @@ builder.Services.AddDbContextPool<OrderDbContext>(options =>
     );
 
 builder.Services.AddHealthChecks();
+builder.Services.AddHttpLogging(o => { });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -33,6 +34,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     DataSeeder.SeedDevelopmentData(app);
+    app.UseHttpLogging();
 }
 
 app.UseHttpsRedirection();
