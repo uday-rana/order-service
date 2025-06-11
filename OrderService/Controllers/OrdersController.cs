@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using OrderService.Dtos;
@@ -26,6 +27,7 @@ public class OrdersController(IOrderService service) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<OrderDto>> Create(OrderCreateDto dto)
     {
         try
@@ -40,6 +42,7 @@ public class OrdersController(IOrderService service) : ControllerBase
     }
 
     [HttpPatch("{id}")]
+    [Authorize]
     public async Task<ActionResult<OrderDto>> Update(int id, OrderUpdateDto dto)
     {
         OrderDto? updated = await _service.UpdateAsync(id, dto);
@@ -47,6 +50,7 @@ public class OrdersController(IOrderService service) : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<ActionResult<bool>> Delete(int id)
     {
         bool deleted = await _service.DeleteAsync(id);
