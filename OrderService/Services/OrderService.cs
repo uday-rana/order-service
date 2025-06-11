@@ -8,16 +8,24 @@ using OrderService.Models;
 
 namespace OrderService.Services;
 
-public class OrderService(OrderDbContext context) : IOrderService
+public class OrderService(OrderDbContext context, ILogger<OrderService> logger) : IOrderService
 {
     private readonly OrderDbContext _context = context;
+    private readonly ILogger<OrderService> _logger = logger;
 
-    public async Task<List<OrderDto>> GetAllAsync() => await _context.Orders
-            .Include(o => o.Customer)
-            .Include(o => o.Items)
-            .ThenInclude(i => i.Product)
-            .Select(o => o.ToDto())
-            .ToListAsync();
+    public async Task<List<OrderDto>> GetAllAsync()
+    {
+        List<OrderDto> orders = await _context.Orders
+        .Include(o => o.Customer)
+        .Include(o => o.Items)
+        .ThenInclude(i => i.Product)
+        .Select(o => o.ToDto())
+        .ToListAsync();
+
+        _logger.LogInformation("Fetched {OrderCount} orders", orders.Count);
+
+        return orders;
+    }
 
     public async Task<OrderDto?> GetByIdAsync(int id)
     {
@@ -27,13 +35,26 @@ public class OrderService(OrderDbContext context) : IOrderService
             .ThenInclude(i => i.Product)
             .FirstOrDefaultAsync(o => o.Id == id);
 
-        return order?.ToDto();
+        if (order is null)
+        {
+            _logger.LogWarning("Order {OrderId} not found", id);
+            return null;
+        }
+
+        _logger.LogInformation("Fetched order {OrderId}", id);
+
+        return order.ToDto();
     }
 
     public async Task<OrderDto> CreateAsync(OrderCreateDto dto)
     {
-        Customer customer = await _context.Customers.FindAsync(dto.CustomerId)
-            ?? throw new Exception("Customer not found");
+        Customer? customer = await _context.Customers.FindAsync(dto.CustomerId);
+
+        if (customer is null)
+        {
+            _logger.LogWarning("Order creation failed: Customer {CustomerId} not found", dto.CustomerId);
+            throw new Exception("Customer not found");
+        }
 
         // Get the list of product ids from the dto
         IEnumerable<int> productIds = dto.Items
@@ -45,7 +66,7 @@ public class OrderService(OrderDbContext context) : IOrderService
             .Where(p => productIds.Contains(p.Id))
             .ToDictionaryAsync(p => p.Id);
 
-        Order newOrder = new()
+        Order order = new()
         {
             Customer = customer,
             Items = [.. dto.Items.Select(i => new OrderItem
@@ -55,10 +76,12 @@ public class OrderService(OrderDbContext context) : IOrderService
                 })]
         };
 
-        _context.Orders.Add(newOrder);
+        _context.Orders.Add(order);
         await _context.SaveChangesAsync();
 
-        return newOrder.ToDto();
+        _logger.LogInformation("Order {OrderId} created", order.Id);
+
+        return order.ToDto();
     }
 
     public async Task<OrderDto?> UpdateAsync(int id, OrderUpdateDto dto)
@@ -69,7 +92,11 @@ public class OrderService(OrderDbContext context) : IOrderService
             .ThenInclude(i => i.Product)
             .FirstOrDefaultAsync(o => o.Id == id);
 
-        if (order is null) { return null; }
+        if (order is null)
+        {
+            _logger.LogWarning("Order update failed: Order {OrderId} not found", id);
+            return null;
+        }
 
 
         order.Status = dto.Status;
@@ -79,6 +106,9 @@ public class OrderService(OrderDbContext context) : IOrderService
         }
 
         await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Order {OrderId} updated", order.Id);
+
         return order.ToDto();
     }
 
@@ -90,6 +120,9 @@ public class OrderService(OrderDbContext context) : IOrderService
 
         _context.Orders.Remove(order);
         await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Order {OrderId} deleted", order.Id);
+
         return true;
     }
 }
