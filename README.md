@@ -6,6 +6,7 @@ Order Service is an ASP.NET Core Web API for managing orders.
 
 - [Docker](https://www.docker.com/)
 - [.NET SDK 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [dotnet ef](https://learn.microsoft.com/en-us/ef/core/cli/dotnet#installing-the-tools)
 
 ## Setup
 
@@ -39,19 +40,19 @@ You can do this in two ways:
     cd order-service/OrderService
     ```
 
-2. Start the database (PostgreSQL) with Docker
+2. Start the database (PostgreSQL) with Docker.
 
     ```sh
     docker compose up -d
     ```
 
-3. Apply EF Core migrations to create the schema
+3. Apply database migrations.
 
     ```sh
     dotnet ef database update
     ```
 
-4. Start the web API
+4. Start the web API.
 
     ```sh
     dotnet run
