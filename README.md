@@ -9,7 +9,9 @@ Order Service is an ASP.NET Core Web API for managing orders.
 
 ## Setup
 
-You need to configure the database connection string and the JWT issuer domain and audience. You can do this in two ways:
+You will need to configure the database connection string and the JWT domain and audience. You'll need to get your own domain and audience. You can get them from [Auth0](https://auth0.com/).
+
+You can do this in two ways:
 
 - Using the .NET Secret Manager:
 
@@ -25,8 +27,10 @@ You need to configure the database connection string and the JWT issuer domain a
     ```sh
     export ConnectionStrings__OrderDb="Host=postgres;Port=5432;Database=orderdb;Username=postgres;Password=mypassword"
     export Jwt__Domain="dev-abc123.us.auth0.com"
-    export JwtF__Audience="https://orderservice/api"
+    export Jwt__Audience="https://orderservice/api"
     ```
+
+
 
 1. Clone the project to your workspace.
 
@@ -54,8 +58,8 @@ You need to configure the database connection string and the JWT issuer domain a
     
     # Or, build and run the Docker image
     docker build -t orderservice -f OrderService/Dockerfile .
-    docker run --rm --init -it -p 5293:5293 -e ConnectionStrings__OrderDb="<your-connection-string>" orderservice
+    docker run --rm --init -it -p 5293:5293 -e ConnectionStrings__OrderDb="<your-connection-string>" -e Jwt__Domain="dev-abc123.us.auth0.com" -e Jwt__Audience="https://orderservice/api" orderservice
 
     # To connect to Postgres running in Docker Compose, use --network
-    docker run --rm --init -it -p 5293:5293 -e ConnectionStrings__OrderDb="Host=postgres;Port=5432;Database=orderdb;Username=postgres;Password=mypassword" --network=order-service_default  orderservice
+    docker run --rm --init -it -p 5293:5293 -e ConnectionStrings__OrderDb="Host=postgres;Port=5432;Database=orderdb;Username=postgres;Password=mypassword" -e Jwt__Domain="dev-abc123.us.auth0.com" -e Jwt__Audience="https://orderservice/api" --network=order-service_default  orderservice
     ```
