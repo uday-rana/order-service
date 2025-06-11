@@ -20,14 +20,14 @@ builder.Services.AddDbContextPool<OrderDbContext>(options =>
     );
 
 builder.Services.AddHealthChecks();
-builder.Services.AddHttpLogging(logging => logging.LoggingFields =
-        HttpLoggingFields.RequestMethod |
-        HttpLoggingFields.RequestPath |
-        HttpLoggingFields.RequestQuery |
-        HttpLoggingFields.ResponseStatusCode
+
+builder.Services.AddHttpLogging(logging =>
+    logging.LoggingFields = HttpLoggingFields.RequestMethod
+        | HttpLoggingFields.RequestPath
+        | HttpLoggingFields.RequestQuery
+        | HttpLoggingFields.ResponseStatusCode
     );
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -43,17 +43,16 @@ WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseHttpsRedirection();
     app.UseSwagger();
     app.UseSwaggerUI();
     DataSeeder.SeedDevelopmentData(app);
 }
 
 app.UseHttpLogging();
-
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
     ResponseWriter = async (context, healthReport) =>

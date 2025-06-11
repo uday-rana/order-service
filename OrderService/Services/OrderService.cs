@@ -70,10 +70,10 @@ public class OrderService(OrderDbContext context, ILogger<OrderService> logger) 
         {
             Customer = customer,
             Items = [.. dto.Items.Select(i => new OrderItem
-                {
-                    Product = products[i.ProductId],
-                    Quantity = i.Quantity
-                })]
+            {
+                Product = products[i.ProductId],
+                Quantity = i.Quantity
+            })]
         };
 
         _context.Orders.Add(order);

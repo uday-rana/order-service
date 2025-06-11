@@ -1,5 +1,7 @@
 ﻿using System;
+
 using Microsoft.EntityFrameworkCore.Migrations;
+
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -21,10 +23,7 @@ namespace OrderService.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Customers", x => x.Id);
-                });
+                constraints: table => table.PrimaryKey("PK_Customers", x => x.Id));
 
             migrationBuilder.CreateTable(
                 name: "Products",
@@ -35,10 +34,7 @@ namespace OrderService.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Products", x => x.Id);
-                });
+                constraints: table => table.PrimaryKey("PK_Products", x => x.Id));
 
             migrationBuilder.CreateTable(
                 name: "Orders",
