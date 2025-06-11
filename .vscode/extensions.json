@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "ms-dotnettools.csdevkit",
+        "docker.docker",
+        "ms-azuretools.vscode-docker",
+        "editorconfig.editorconfig",
+        "streetsidesoftware.code-spell-checker",
+        "humao.rest-client"
+    ]
+}
