@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 
 using OrderService.Data;
@@ -19,7 +20,12 @@ builder.Services.AddDbContextPool<OrderDbContext>(options =>
     );
 
 builder.Services.AddHealthChecks();
-builder.Services.AddHttpLogging(o => { });
+builder.Services.AddHttpLogging(logging => logging.LoggingFields =
+        HttpLoggingFields.RequestMethod |
+        HttpLoggingFields.RequestPath |
+        HttpLoggingFields.RequestQuery |
+        HttpLoggingFields.ResponseStatusCode
+    );
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -40,10 +46,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     DataSeeder.SeedDevelopmentData(app);
-    app.UseHttpLogging();
 }
 
-app.UseHttpsRedirection();
+app.UseHttpLogging();
 
 app.UseAuthorization();
 

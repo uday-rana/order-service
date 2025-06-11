@@ -22,7 +22,7 @@ public class OrderService(OrderDbContext context, ILogger<OrderService> logger) 
         .Select(o => o.ToDto())
         .ToListAsync();
 
-        _logger.LogInformation("Fetched {OrderCount} orders", orders.Count);
+        _logger.LogInformation("Fetched {OrderCount} order(s)", orders.Count);
 
         return orders;
     }
