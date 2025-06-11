@@ -4,54 +4,58 @@ Order Service is an ASP.NET Core Web API for managing orders.
 
 ## Requirements
 
-- Docker
+- [Docker](https://www.docker.com/)
+- [.NET SDK 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 
-or
+## Setup
 
-- .NET SDK 8
-- PostgreSQL
+You need to configure the database connection string and the JWT issuer domain and audience. You can do this in two ways:
 
-## Instructions
+- Using the .NET Secret Manager:
 
-```sh
-# Clone the repository
-git clone <repo-url>
-cd order-service
+    ```sh
+    dotnet user-secrets init
+    dotnet user-secrets set "ConnectionStrings:OrderDb" "Host=postgres;Port=5432;Database=orderdb;Username=postgres;Password=mypassword"
+    dotnet user-secrets set "Jwt:Domain" "dev-abc123.us.auth0.com"
+    dotnet user-secrets set "Jwt:Audience" "https://orderservice/api"
+    ```
 
-# Start the database (PostgreSQL) via Docker
-docker compose up -d
+- By setting environment variables:
 
-# Apply EF Core migrations to create the schema
-dotnet ef database update --project OrderService
+    ```sh
+    export ConnectionStrings__OrderDb="Host=postgres;Port=5432;Database=orderdb;Username=postgres;Password=mypassword"
+    export Jwt__Domain="dev-abc123.us.auth0.com"
+    export JwtF__Audience="https://orderservice/api"
+    ```
 
-# Run the ASP.NET Core Web API
-dotnet run --project OrderService
+1. Clone the project to your workspace.
 
-# Or, build and run the Docker image
-docker build -t orderservice -f OrderService/Dockerfile .
-docker run --rm --init -it -p 5293:5293 -e ConnectionStrings__OrderDb="<your-connection-string>" orderservice
+    ```sh
+    git clone <url> order-service
+    cd order-service/OrderService
+    ```
 
-# To connect to Postgres running in Docker Compose, use --network
-docker run --rm --init -it -p 5293:5293 -e ConnectionStrings__OrderDb="Host=postgres;Port=5432;Database=orderdb;Username=postgres;Password=mypassword" --network=order-service_default  orderservice
-```
+2. Start the database (PostgreSQL) with Docker
 
-## Configuration
+    ```sh
+    docker compose up -d
+    ```
 
-You need to configure the database connection string and the JWT issuer domain and audience. You can do this two ways:
+3. Apply EF Core migrations to create the schema
 
-1) Using the .NET Secret Manager:
+    ```sh
+    dotnet ef database update --project OrderService
+    ```
 
-```sh
-dotnet user-secrets init
-dotnet user-secrets set "ConnectionStrings:OrderDb" "Host=postgres;Port=5432;Database=orderdb;Username=postgres;Password=mypassword"
-dotnet user-secrets set "Jwt:Domain" "dev-abc123.us.auth0.com"
-dotnet user-secrets set "Jwt:Audience" "https://orderservice/api"
-```
+4. Start the web API
 
-2) By setting environment variables:
+    ```sh
+    dotnet run --project OrderService
+    
+    # Or, build and run the Docker image
+    docker build -t orderservice -f OrderService/Dockerfile .
+    docker run --rm --init -it -p 5293:5293 -e ConnectionStrings__OrderDb="<your-connection-string>" orderservice
 
-```sh
-export ConnectionStrings__OrderDb="Host=postgres;Port=5432;Database=orderdb;Username=postgres;Password=mypassword"
-export Jwt__Domain="dev-abc123.us.auth0.com"
-export JwtF__Audience="https://orderservice/api"
-```
+    # To connect to Postgres running in Docker Compose, use --network
+    docker run --rm --init -it -p 5293:5293 -e ConnectionStrings__OrderDb="Host=postgres;Port=5432;Database=orderdb;Username=postgres;Password=mypassword" --network=order-service_default  orderservice
+    ```
