@@ -33,9 +33,9 @@ public class OrdersController(IOrderService service) : ControllerBase
             OrderDto created = await _service.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
-        catch (Exception ex)
+        catch (BadHttpRequestException ex)
         {
-            return BadRequest(new { error = ex.Message });
+            return BadRequest(new ProblemDetails { Title = "Bad Request", Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1", Detail = ex.Message });
         }
     }
 

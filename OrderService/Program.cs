@@ -28,6 +28,8 @@ builder.Services.AddHttpLogging(logging =>
         | HttpLoggingFields.ResponseStatusCode
     );
 
+builder.Services.AddProblemDetails();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -49,6 +51,7 @@ if (app.Environment.IsDevelopment())
     DataSeeder.SeedDevelopmentData(app);
 }
 
+app.UseExceptionHandler();
 app.UseHttpLogging();
 app.UseAuthorization();
 

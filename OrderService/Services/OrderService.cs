@@ -53,7 +53,7 @@ public class OrderService(OrderDbContext context, ILogger<OrderService> logger) 
         if (customer is null)
         {
             _logger.LogWarning("Order creation failed: Customer {CustomerId} not found", dto.CustomerId);
-            throw new Exception("Customer not found");
+            throw new BadHttpRequestException("Customer not found");
         }
 
         // Get the list of product ids from the dto
