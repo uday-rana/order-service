@@ -1,13 +1,20 @@
 {
     "cSpell.words": [
         "accessibilities",
+        "buildtransitive",
+        "contentfiles",
         "Dtos",
+        "healthcheck",
         "ipascalcase",
+        "isready",
         "mypassword",
         "Npgsql",
         "orderdb",
         "orderservice",
         "pascalcase",
-        "tpascalcase"
+        "Rana",
+        "Swashbuckle",
+        "tpascalcase",
+        "Uday"
     ]
 }
