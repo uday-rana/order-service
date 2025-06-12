@@ -27,5 +27,5 @@ export  Jwt__Audience="https://orderservice/api"
 2. Start the app using Docker Compose.
 
     ```sh
-    docker compose -f compose.ci.yaml up
+    docker compose -f compose.local.yaml up
     ```

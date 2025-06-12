@@ -1,4 +1,4 @@
-name: order-service-ci
+name: order-service-local
 services:
   order-service:
     build:
@@ -12,6 +12,7 @@ services:
     environment:
       - Jwt__Domain=${Jwt__Domain}
       - Jwt__Audience=${Jwt__Audience}
+      - ASPNETCORE_ENVIRONMENT=Development
     env_file:
       - compose.env
     init: true
