@@ -1,0 +1,29 @@
+name: order-service-ci
+services:
+  order-service:
+    build:
+      context: .
+      dockerfile: OrderService/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "5293:5293"
+    environment:
+      - Jwt__Domain=${Jwt__Domain}
+      - Jwt__Audience=${Jwt__Audience}
+    env_file:
+      - compose.env
+    init: true
+  postgres:
+    image: postgres:17.5-alpine3.22
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    env_file:
+      - compose.env
+    init: true

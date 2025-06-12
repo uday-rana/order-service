@@ -93,6 +93,13 @@ if (!builder.Environment.IsDevelopment())
 
 WebApplication app = builder.Build();
 
+// Apply database migrations
+using (IServiceScope scope = app.Services.CreateScope())
+{
+    OrderDbContext db = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+    db.Database.Migrate();
+}
+
 app.UseExceptionHandler();
 if (app.Environment.IsDevelopment())
 {
