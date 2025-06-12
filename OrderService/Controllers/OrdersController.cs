@@ -51,7 +51,7 @@ public class OrdersController(IOrderService service) : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize]
-    public async Task<ActionResult<bool>> Delete(int id)
+    public async Task<ActionResult> Delete(int id)
     {
         bool deleted = await _service.DeleteAsync(id);
         return deleted ? NoContent() : NotFound();
