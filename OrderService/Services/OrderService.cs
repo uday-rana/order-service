@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using OrderService.Data;
@@ -13,18 +14,81 @@ public class OrderService(OrderDbContext context, ILogger<OrderService> logger) 
     private readonly OrderDbContext _context = context;
     private readonly ILogger<OrderService> _logger = logger;
 
-    public async Task<List<OrderDto>> GetAllAsync()
+    public async Task<IReadOnlyList<OrderDto>> GetAllAsync([FromQuery] OrderQueryParameters query)
     {
-        List<OrderDto> orders = await _context.Orders
-        .Include(o => o.Customer)
-        .Include(o => o.Items)
-        .ThenInclude(i => i.Product)
-        .Select(o => o.ToDto())
-        .ToListAsync();
+        IQueryable<Order> orders = _context.Orders
+            .Include(o => o.Customer)
+            .Include(o => o.Items)
+            .ThenInclude(i => i.Product);
 
-        _logger.LogInformation("Fetched {OrderCount} order(s)", orders.Count);
+        if (query.CustomerId.HasValue)
+        {
+            orders = orders.Where(o => o.CustomerId == query.CustomerId.Value);
+        }
 
-        return orders;
+        if (query.Status.HasValue)
+        {
+            orders = orders.Where(o => o.Status == query.Status);
+        }
+
+        if (query.CreatedFrom.HasValue)
+        {
+            DateTime from = query.CreatedFrom.Value;
+            orders = orders.Where(o => o.CreatedAt >= from);
+        }
+
+        if (query.CreatedTo.HasValue)
+        {
+            DateTime to = query.CreatedTo.Value;
+            orders = orders.Where(o => o.CreatedAt <= to);
+        }
+
+        if (query.FulfilledFrom.HasValue)
+        {
+            DateTime from = query.FulfilledFrom.Value;
+            orders = orders.Where(o => o.FulfilledAt.HasValue && o.FulfilledAt.Value >= from);
+        }
+
+        if (query.FulfilledTo.HasValue)
+        {
+            DateTime to = query.FulfilledTo.Value;
+            orders = orders.Where(o => o.FulfilledAt.HasValue && o.FulfilledAt.Value <= to);
+        }
+
+        if (query.ProductId.HasValue)
+        {
+            int productId = query.ProductId.Value;
+            orders = orders.Where(o => o.Items.Any(i => i.ProductId == productId));
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.SortBy))
+        {
+            bool desc = query.SortDescending;
+            string sort = query.SortBy!.ToLowerInvariant();
+            orders = sort switch
+            {
+                "createdat" => desc ? orders.OrderByDescending(o => o.CreatedAt) : orders.OrderBy(o => o.CreatedAt),
+                "fulfilledat" => desc ? orders.OrderByDescending(o => o.FulfilledAt) : orders.OrderBy(o => o.FulfilledAt),
+                "status" => desc ? orders.OrderByDescending(o => o.Status) : orders.OrderBy(o => o.Status),
+                _ => desc ? orders.OrderByDescending(o => o.Id) : orders.OrderBy(o => o.Id)
+            };
+        }
+        else
+        {
+            orders = query.SortDescending ? orders.OrderByDescending(o => o.Id) : orders.OrderBy(o => o.Id);
+        }
+
+        orders = orders
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize);
+
+        List<OrderDto> result = await orders
+            .Select(o => o.ToDto())
+            .ToListAsync();
+
+        _logger.LogInformation("Fetched {OrderCount} order(s)", result.Count);
+
+        return result;
     }
 
     public async Task<OrderDto?> GetByIdAsync(int id)

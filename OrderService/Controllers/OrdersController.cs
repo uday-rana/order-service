@@ -13,9 +13,9 @@ public class OrdersController(IOrderService service) : ControllerBase
     private readonly IOrderService _service = service;
 
     [HttpGet]
-    public async Task<ActionResult<List<OrderDto>>> GetAll()
+    public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetAll([FromQuery] OrderQueryParameters query)
     {
-        List<OrderDto> orders = await _service.GetAllAsync();
+        IReadOnlyList<OrderDto> orders = await _service.GetAllAsync(query);
         return Ok(orders);
     }
 
