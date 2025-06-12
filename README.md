@@ -14,7 +14,7 @@ Once acquired you will need to set them as environment variables. These will be 
 
 ```sh
 export Jwt__Domain="dev-abc123.us.auth0.com"
-export  Jwt__Audience="https://orderservice/api"
+export Jwt__Audience="https://orderservice/api"
 ```
 
 1. Clone the project to your workspace.
