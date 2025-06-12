@@ -61,10 +61,21 @@ public class OrderService(OrderDbContext context, ILogger<OrderService> logger) 
             .Select(i => i.ProductId)
             .Distinct();
 
-        // Get the product entities using the ids and store them in a dict with the ids as the keys
+        // Get the product entities using the ids and store them in a dictionary with the ids as the keys
         Dictionary<int, Product> products = await _context.Products
             .Where(p => productIds.Contains(p.Id))
             .ToDictionaryAsync(p => p.Id);
+
+        // Validate that all of the referenced products exist
+        IEnumerable<int> missingProductIds = productIds.Where(id => !products.ContainsKey(id));
+        if (missingProductIds.Any())
+        {
+            string missingList = string.Join(", ", missingProductIds);
+            _logger.LogWarning(
+                "Order creation failed: Product(s) {MissingProductIds} not found",
+                missingList);
+            throw new BadHttpRequestException("Product not found");
+        }
 
         Order order = new()
         {
