@@ -2,6 +2,8 @@
 
 Order Service is an ASP.NET Core Web API for managing orders.
 
+![Order Service Architecture Diagram](./order-service-architecture-diagram.avif)
+
 ## Requirements
 
 - [Docker](https://www.docker.com/)
